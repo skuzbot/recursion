@@ -1,12 +1,12 @@
-var htmlStrings = [
-  '<div class="targetClassName"></div>',
-  '<div class="otherClassName targetClassName"></div>',
-  '<div><div class="targetClassName"></div></div>',
-  '<div><div class="targetClassName"><div class="targetClassName"></div></div></div>',
-  '<div><div></div><div><div class="targetClassName"></div></div></div>',
-  '<div><div class="targetClassName"></div><div class="targetClassName"></div></div>',
-  '<div><div class="somediv"><div class="innerdiv"><span class="targetClassName">yay</span></div></div></div>'
-];
+// var htmlStrings = [
+//   '<div class="targetClassName"></div>',
+//   '<div class="otherClassName targetClassName"></div>',
+//   '<div><div class="targetClassName"></div></div>',
+//   '<div><div class="targetClassName"><div class="targetClassName"></div></div></div>',
+//   '<div><div></div><div><div class="targetClassName"></div></div></div>',
+//   '<div><div class="targetClassName"></div><div class="targetClassName"></div></div>',
+//   '<div><div class="somediv"><div class="innerdiv"><span class="targetClassName">yay</span></div></div></div>'
+// ];
 
 // If life was easy, we could just do things the easy way:
 // var getElementsByClassName = function (className) {
@@ -18,23 +18,22 @@ var htmlStrings = [
 // You should use: document.body, element.childNodes, element.classList
 
 //basecase: node has no children with matching className
-var getElementsByClassName = function(className) {
+var getElementsByClassName = function(className, node) {
 	
 	var output = [];
 
-	var node = document.body;
+	var node = node || document.body;
 
-	function findElementbyClass(element) {
-		if (element.classList && element.classList.contains(className)) {
-			output.push(element);
-		}
-		if (element.childNodes) {
-			findElementsbyClass(element.childNodes);
-		} 
+	if (node.classList && node.classList.contains(className)) {
+		output.push(node);
 	}
-
-	findElementbyClass(node);
-
+	var children = node.childNodes;
+	if(children) {
+		for (var i = 0; i < children.length; i++) {
+			var child = children[i];
+			output = output.concat(getElementsByClassName(className, child));
+		}
+	}
 	return output;
 };
 

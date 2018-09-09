@@ -10,9 +10,9 @@
 // var str = 'goose';  // '"goose"'
 // var boo = true; // 'true' or 'false'
 // 'null'
+//var arr = [1, 2, 3, 4];         //  '[1,2,3,4]'
 
 
-var arr = [1, 2, 3, 4]; 		//  '[1,2,3,4]'
 var obj = {a: 1, b: 2, c: 3}; 	//	'{"a":1,"b":2,"c":3}'
 
 var stringifiableObjects = [
@@ -28,47 +28,60 @@ var stringifiableObjects = [
   [1, 0, -1, -0.3, 0.3, 1343.32, 3345, 0.00011999999999999999],
   [8, [[], 3, 4]],
   [[[['foo']]]],
-  // {},
-  // {'a': 'apple'},
-  // {'foo': true, 'bar': false, 'baz': null},
-  // {'boolean, true': true, 'boolean, false': false, 'null': null },
-  // // basic nesting
-  // {'a': {'b': 'c'}},
-  // {'a': ['b', 'c']},
-  // [{'a': 'b'}, {'c': 'd'}],
-  // {'a': [], 'c': {}, 'b': true}
+  {},
+  {'a': 'apple'},
+  {'foo': true, 'bar': false, 'baz': null},
+  {'boolean, true': true, 'boolean, false': false, 'null': null },
+  // basic nesting
+  {'a': {'b': 'c'}},
+  {'a': ['b', 'c']},
+  [{'a': 'b'}, {'c': 'd'}],
+  {'a': [], 'c': {}, 'b': true}
 ];
 
+// unstringifiableValues = [
+//   {
+//     'functions': function() {},
+//     'undefined': undefined
+//   }
+// ];
 
 
 
-var stringifyJSON = function(obj) {
 
-    //  check for undefined outputs
-    if (typeof obj === 'function' || typeof obj === undefined) {
-        return undefined;
-    }
+var stringifyJSON =(obj) => {
 
+  //  check for undefined outputs
+  if (typeof obj === 'function' || typeof obj === undefined) {
+      return undefined;
+  }
 
 	// check for primitive types
 	if (typeof obj === 'number' || typeof obj === 'boolean' || obj === null) {
 		return String(obj);
 	}
 
-    //
+  //  check for string
+  if (typeof obj === 'string') {
+    return '"' + obj + '"';
+  }
 
-    //  check for string
-    if (typeof obj === 'string') {
-        return '"' + obj + '"';
-    }
+  //  check for array
+  if (Array.isArray(obj)) {
+    return '[' + obj.map(stringifyJSON) + ']';
+  }
 
-    //  check for array
-    if (Array.isArray(obj)) {
-        return '[' + obj.map(stringifyJSON) + ']';
-    }
-
-
-
+  // check for obj   needs to look like: '{"a":1,"b":2,"c":3}' keys are in "a" whole thing is a string;
+    //need to pull out keys with Object.keys() then foreach every key and obj[key] to string
+  if (obj instanceof Object) {
+    var strKeys = Object.keys(obj);
+    var objArray = [];
+    strKeys.forEach(function(key) {
+      var strKeys = stringifyJSON(key) + ':' + stringifyJSON(obj[key]);
+      objArray.push(strKeys);
+    });
+    return '{' + objArray.join(",") + '}';
+  }
 };
 
 

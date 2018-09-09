@@ -9,7 +9,7 @@ var htmlStrings = [
 ];
 
 describe('getElementsByClassName', function() {
-
+  
   it('should match the results of calling the built-in function', function() {
     $('body').addClass('targetClassName');
     htmlStrings.forEach(function(htmlString) {
